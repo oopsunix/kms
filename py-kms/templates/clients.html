@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Clients · KMS{% endblock %}
+
+{% block style %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-10">
+        <h1 class="text-3xl font-bold text-white">KMS Clients</h1>
+        <p class="mt-2 text-gray-300">Active client connections and activation status</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+          <dt class="text-sm font-medium text-gray-600 dark:text-gray-300">Total Clients</dt>
+          <dd class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ count_clients }}</dd>
+      </div>
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+          <dt class="text-sm font-medium text-gray-600 dark:text-gray-300">Windows</dt>
+          <dd class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ count_clients_windows }}</dd>
+      </div>
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+          <dt class="text-sm font-medium text-gray-600 dark:text-gray-300">Office</dt>
+          <dd class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ count_clients_office }}</dd>
+      </div>
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <dt class="text-sm font-medium text-gray-600 dark:text-gray-300">Products</dt>
+        <dd class="mt-2 text-3xl font-bold text-blue-600 dark:text-blue-400">
+            <a href="/products">{{ count_projects }}</a>
+        </dd>
+    </div>
+    </div>
+
+    <!-- Clients Table -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200 min-w-[300px]">Client ID</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200">Machine Name</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200">Application ID</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200">SKU ID</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200">License Status</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200">Count</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for client in clients %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/10 relative">
+                    <!-- Client ID -->
+                    <td class="px-4 py-3 font-mono text-sm text-gray-900 dark:text-gray-100 client-id-cell relative">
+                        <span class="whitespace-normal break-words">{{ client.clientMachineId }}</span>
+                        <div class="epid-tooltip">
+                            <div class="text-sm font-medium mb-1">KMS EPID:</div>
+                            <code class="text-xs">{{ client.kmsEpid | default('N/A', true) }}</code>
+                        </div>
+                    </td>
+
+                    <!-- Machine Name -->
+                    <td class="px-4 py-3">
+                        <div>
+                            <div class="text-gray-900 dark:text-gray-100 text-sm">{{ client.machineName }}</div>
+                            <div class="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                              Last IP: <span>{{ client.machineIp }}</span>
+                          </div>
+                            <div class="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                                Last active: <span class="convert_timestamp">{{ client.lastRequestTime }}</span>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Application -->
+                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ client.applicationId }}</td>
+
+                    <!-- SKU ID -->
+                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ client.skuId }}</td>
+
+                    <!-- Status -->
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                  {% if client.licenseStatus == 'Activated' %}bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200
+                                  {% else %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200{% endif %}">
+                            {% if client.licenseStatus == 'Notifications Mode' %}
+                                Notify
+                            {% else %}
+                                {{ client.licenseStatus }}
+                            {% endif %}
+                        </span>
+                    </td>
+
+                    <!-- Count -->
+                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ client.requestCount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Empty State -->
+    {% if not clients %}
+    <div class="mt-10 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-700 rounded-xl p-8 text-center">
+        <div class="max-w-md mx-auto">
+            <svg class="mx-auto h-12 w-12 text-yellow-500 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <h3 class="mt-4 text-xl font-medium text-yellow-800 dark:text-yellow-200">No active connections</h3>
+            <p class="mt-2 text-yellow-700 dark:text-yellow-300">Connect KMS clients to see activation data</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

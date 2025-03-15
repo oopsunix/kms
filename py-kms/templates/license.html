@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}License{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-white mb-8">Software License</h1>
+
+<div class="bg-gray-800 rounded-lg shadow overflow-hidden">
+    <pre class="p-6 text-gray-300 overflow-auto max-h-[70vh]">{{ license }}</pre>
+</div>
+{% endblock %}

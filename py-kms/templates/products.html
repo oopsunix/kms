@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Products · py-kms{% endblock %}
+
+{% block style %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">Product Keys</h1>
+    <p class="mt-2 text-gray-300">Volume License Keys (GVLK) for Microsoft Products</p>
+  </div>
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+      <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Products</dt>
+      <dd class="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">{{ count_products + filtered }}</dd>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+      <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Windows</dt>
+      <dd class="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">{{ count_products_windows }}</dd>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+      <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Office</dt>
+      <dd class="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">{{ count_products_office }}</dd>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+      <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Other</dt>
+      <dd class="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">{{ filtered }}</dd>
+    </div>
+  </div>
+  <!-- Products Table -->
+  <div class="bg-white dark:bg-gray-800 shadow overflow-hidden rounded-lg -mx-2">
+    <div class="overflow-x-auto p-2">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <!-- tbody -->
+        <tbody>
+          <tr class="bg-gray-50 dark:bg-gray-700">
+            <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-2/5">Products</th>
+            <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"></th>
+          </tr>
+        </tbody>
+        {% for name, gvlk in products | dictsort %}
+          {% if gvlk is not none %}
+            {% if gvlk is mapping %}
+              <!-- Categories -->
+              <tbody class="category-group">
+                <tr class="bg-gray-50 dark:bg-gray-700 cursor-pointer" onclick="toggleCategory(this)">
+                  <td colspan="2" class="px-6 py-3">
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ name }}</span>
+                    <svg class="inline w-4 h-4 ml-2 transform transition-transform duration-200 text-white" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.25 8.27a.75.75 0 01-.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                  </td>
+                </tr>
+              </tbody>
+              <!-- Sub-items -->
+              <tbody class="sub-items">
+                <tr>
+                  <td colspan="2" class="p-0 border-0">
+                    <div class="collapsible" id="collapse-{{ loop.index }}" style="max-height: 0;">
+                      <table class="min-w-full">
+                        <tbody>
+                          {% for sub_name, sub_gvlk in gvlk.items() %}
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                              <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 pl-8">
+                                <span class="ml-2">{{ sub_name }}</span>
+                              </td>
+                              <td class="px-6 py-4 text-sm font-mono text-gray-900 dark:text-gray-300">
+                                {% if sub_gvlk %}
+                                  <pre class="copyable inline-block bg-gray-100 dark:bg-gray-900 px-3 py-2 rounded-lg">{{ sub_gvlk }}</pre>
+                                {% else %}
+                                  <span class="text-gray-400 dark:text-gray-500 italic">N/A</span>
+                                {% endif %}
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            {% else %}
+              <!-- Single Product -->
+              <tbody>
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                  <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 font-medium">{{ name }}</td>
+                  <td class="px-6 py-4 text-sm font-mono text-gray-900 dark:text-gray-300">
+                    {% if gvlk %}
+                      <pre class="copyable inline-block bg-gray-100 dark:bg-gray-900 px-3 py-2 rounded-lg">{{ gvlk }}</pre>
+                    {% else %}
+                      <span class="text-gray-400 dark:text-gray-500 italic">N/A</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              </tbody>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  function toggleCategory(header) {
+    var categoryTbody = header.closest('tbody');
+    var subItemsTbody = categoryTbody.nextElementSibling;
+    if (subItemsTbody && subItemsTbody.classList.contains('sub-items')) {
+      var collapseDiv = subItemsTbody.querySelector('.collapsible');
+      if (collapseDiv) {
+        if (collapseDiv.style.maxHeight && collapseDiv.style.maxHeight !== "0px") {
+          collapseDiv.style.maxHeight = "0";
+        } else {
+          collapseDiv.style.maxHeight = collapseDiv.scrollHeight + "px";
+        }
+      }
+      // Rotate icon
+      var svg = header.querySelector('svg');
+      if (svg) {
+        svg.classList.toggle('rotate-180');
+      }
+    }
+  }
+
+  // Copy-to-clipboard
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.copyable').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var text = el.innerText.trim();
+        navigator.clipboard.writeText(text)
+          .then(function() {
+            console.log('Copied: ' + text);
+            el.style.backgroundColor = '#243252';
+            setTimeout(function() {
+              el.style.backgroundColor = '';
+            }, 1000);
+          })
+          .catch(function(err) {
+            console.error('Failed to copy: ', err);
+          });
+      });
+    });
+  });
+</script>
+{% endblock %}

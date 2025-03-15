@@ -1,0 +1,13 @@
+# IDE
+.idea/
+.vscode/
+.DS_Store
+
+# Environments
+.env
+.venv
+
+build/
+cache/
+test/
+log/
