@@ -47,7 +47,7 @@ Microsoft Windows/Office KMS 本地激活服务器
 services:
   kms:
     image: "oopsunix/kms:latest"
-	# image: "ghcr.io/oopsunix/kms:latest" # GitHub Container Registry
+    # image: "ghcr.io/oopsunix/kms:latest" # GitHub Container Registry
     container_name: "kms"
     restart: "always"
     ports:
@@ -66,10 +66,10 @@ services:
 | `KMS_LOCALE` | 参见Microsoft LICD规范 | 1033 (en-US) |
 | `KMS_CLIENTCOUNT` | 客户端数量 > 25 | 26 |
 | `KMS_ACTIVATIONINTERVAL` | 重试失败间隔（分钟） | 120 (2 hours) |
-| `KMS_RENEWALINTERVAL` | 自动续期间隔（分钟） | 259200 (180 days) |
+| `KMS_RENEWALINTERVAL` | 自动续期间隔（分钟） | 129600 (90 days) |
 | `KMS_LOGLEVEL` | CRITICAL, ERROR, WARNING, INFO, DEBUG, MININFO | INFO |
 
-## ❤ 致谢
+## ❤️ 致谢
 
 * [py-kms](https://github.com/Py-KMS-Organization/py-kms)
 

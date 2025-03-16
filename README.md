@@ -47,7 +47,7 @@ Microsoft Windows/Office KMS Local Activation Server
 services:
   kms:
     image: "oopsunix/kms:latest"
-	# image: "ghcr.io/oopsunix/kms:latest" # GitHub Container Registry
+    # image: "ghcr.io/oopsunix/kms:latest" # GitHub Container Registry
     container_name: "kms"
     restart: "always"
     ports:
@@ -67,10 +67,10 @@ services:
 | `KMS_LOCALE` | see Microsoft LICD specification | 1033 (en-US) |
 | `KMS_CLIENTCOUNT` | client count > 25 | 26 |
 | `KMS_ACTIVATIONINTERVAL` | Retry unsuccessful after N minutes | 120 (2 hours) |
-| `KMS_RENEWALINTERVAL` | re-activation after N minutes | 259200 (180 days) |
+| `KMS_RENEWALINTERVAL` | re-activation after N minutes | 129600 (90 days) |
 | `KMS_LOGLEVEL` | CRITICAL, ERROR, WARNING, INFO, DEBUG, MININFO | INFO |
 
-## ❤ Thanks
+## ❤️ Thanks
 
 * [py-kms](https://github.com/Py-KMS-Organization/py-kms)
 
