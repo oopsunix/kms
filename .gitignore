@@ -7,7 +7,13 @@
 .env
 .venv
 
-build/
-cache/
-test/
-log/
+# Temporary files
+.cache
+.temp
+build
+cache
+dist
+test
+log
+db
+tmp

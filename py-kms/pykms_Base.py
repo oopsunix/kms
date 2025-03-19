@@ -4,6 +4,8 @@ import binascii
 import logging
 import time
 import uuid
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from pykms_Structure import Structure
 from pykms_DB2Dict import kmsDB2Dict
@@ -115,25 +117,15 @@ class kmsBase:
                 applicationId = kmsRequest['applicationId'].get()
                 skuId = kmsRequest['skuId'].get()
                 requestDatetime = filetime_to_dt(kmsRequest['requestTime'])
-
-                # Localize the request time, if module "tzlocal" is available.
+                print(f"requestDatetime: {requestDatetime}")
+                # Localize the request time, Zoneinfo is a standard library module that requires Python 3.9 or higher.
                 try:
-                        from datetime import datetime
-                        from tzlocal import get_localzone
-                        from pytz.exceptions import UnknownTimeZoneError
-                        try:
-                                local_dt = datetime.fromisoformat(str(requestDatetime)).astimezone(get_localzone())
-                        except UnknownTimeZoneError:
-                                pretty_printer(log_obj = loggersrv.warning,
-                                               put_text = "{reverse}{yellow}{bold}Unknown time zone ! Request time not localized.{end}")
-                                local_dt = requestDatetime
-                except ImportError:
-                        pretty_printer(log_obj = loggersrv.warning,
-                                       put_text = "{reverse}{yellow}{bold}Module 'tzlocal' or 'pytz' not available ! Request time not localized.{end}")
-                        local_dt = requestDatetime
+                    dt_utc = datetime.fromisoformat(str(requestDatetime)).replace(tzinfo=ZoneInfo("UTC"))
+                    local_timezone = datetime.now().astimezone().tzinfo
+                    local_dt = dt_utc.astimezone(local_timezone).replace(tzinfo=None)
                 except Exception as e:
-                    # Just in case something else goes wrong
-                    loggersrv.warning('Okay, something went horribly wrong while localizing the request time (proceeding anyways): ' + str(e))
+                    pretty_printer(log_obj = loggersrv.warning,
+                                       put_text = "{reverse}{yellow}{bold}Failed to localize request time: {end}" + str(e))
                     local_dt = requestDatetime
                     pass
 

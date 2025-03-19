@@ -65,7 +65,7 @@ services:
 | `DEBUG` | Will activate debug option for container image and app (if available) | |
 | `KMS_LOCALE` | 参见Microsoft LICD规范 | 1033 (en-US) |
 | `KMS_CLIENTCOUNT` | 客户端数量 > 25 | 26 |
-| `KMS_ACTIVATIONINTERVAL` | 重试失败间隔（分钟） | 120 (2 hours) |
+| `KMS_ACTIVATIONINTERVAL` | 失败重试间隔（分钟） | 120 (2 hours) |
 | `KMS_RENEWALINTERVAL` | 自动续期间隔（分钟） | 129600 (90 days) |
 | `KMS_LOGLEVEL` | CRITICAL, ERROR, WARNING, INFO, DEBUG, MININFO | INFO |
 
